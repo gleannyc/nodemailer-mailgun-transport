@@ -140,11 +140,14 @@ const transport = (options = {}) => {
     generatedUrl.port = options.port || 443;
     url = generatedUrl.href;
   }
-  const messages = mailgun.client({
+  let mailgun_opts = {
     username: 'api',
     key: options.auth.api_key || options.auth.apiKey,
     url
-  }).messages;
+  }
+  if (options.timeout)
+    mailgun_opts["timeout"] = options.timeout;
+  const messages = mailgun.client(mailgun_opts).messages;
 
   const mailgunSend = mail => messages.create(options.auth.domain || "", mail);
   return {
